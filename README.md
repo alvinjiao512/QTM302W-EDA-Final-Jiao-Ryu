@@ -58,6 +58,8 @@ To replicate the analysis:
 For inquiries, please contact:
 - Alvin Jiao
 - Email Address: yjiao25@emory.edu
+- Justin Ryu
+- Email Address: justin.ryu@emory.edu
 
 
 ## References
