@@ -5,6 +5,7 @@
 ## Names and Affiliations
 
 *Alvin Jiao*
+
 *Justin Ryu*
 
 ## Project Objectives
