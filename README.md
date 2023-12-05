@@ -4,8 +4,8 @@
 
 ## Names and Affiliations
 
-*Your Name*
-*Your Affiliation*
+*Alvin Jiao*
+*Justin Ryu*
 
 ## Project Objectives
 
