@@ -1,41 +1,64 @@
 # Data Science Salary Analysis
 
-## Introduction
+[![Binder](http://mybinder.org/badge_logo.svg)](http://mybinder.org/v2/gh/YourGitHubUsername/YourRepositoryName/main?urlpath=rstudio)
 
-This repository contains an exploratory data analysis (EDA) notebook that aims to investigate potential salary disparities among data science professionals in the United States. The dataset used encompasses various components, including total yearly compensation, total years of experience, gender, and 24 other variables related to data science employees. The primary objective is to determine if there is a salary disparity among different regions defined by the US Census Bureau, and if so, to identify potential causes.
+## Names and Affiliations
 
-## Structure
+*Your Name*
+*Your Affiliation*
 
-The analysis is structured as follows:
+## Project Objectives
 
-1. **Data Exploration:**
-   - Loading necessary packages and reading the dataset.
-   - Providing an overview of the dataset, including key variables such as total yearly compensation, race, education level, years of experience, and geographic location.
+### Short Description
+This project aims to analyze potential salary disparities among data science professionals in the United States. We explore various factors such as total yearly compensation, years of experience, and gender to understand the dynamics contributing to salary variations.
 
-2. **Data Cleaning:**
-   - Standardizing variable names to snake_case for consistency.
-   - Cleaning up the location variable to focus on US locations and categorizing them into four regions: Northeast, Midwest, South, and West.
+### Methods Used
+- Exploratory Data Analysis (EDA)
+- Data Cleaning
+- Data Visualization
+- Statistical Analysis
 
-3. **Exploratory Data Analysis:**
-   - Investigating the relationship between total yearly compensation and location using visualizations, including a boxplot and density plot.
-   - Examining the association between years of experience and total compensation, considering gender as a factor.
-   - Exploring the relationship between years of experience and location to identify potential confounders.
+### Platforms/Languages
+- R
+- Markdown
 
-4. **Conclusion & Implications:**
-   - Summarizing key findings and addressing limitations in the dataset, such as missing education data.
-   - Outlining future steps to modify hypotheses, address missing data, and conduct a more in-depth analysis.
+## Project Description
 
-5. **Cost of Living Exploration:**
-   - Exploring the cost of living index by region to provide additional context for salary disparities.
+### Research Questions
+1. Is there a salary disparity among different regions in the United States?
+2. What is the association between years of experience and total compensation, considering gender?
+3. How does the cost of living index relate to salary disparities?
 
-6. **Salary vs. Majors vs. Gender Exploration:**
-   - Analyzing the relationship between undergraduate majors, mid-career median salaries, and gender using bar plots.
+### Methods and Techniques
+- Boxplots and Density Plots for visualizing salary distribution
+- Scatterplots to explore the relationship between experience and compensation
+- Bar plots for comparing cost of living index by region
 
-## Usage
+### Challenges
+- Missing education data limiting a comprehensive analysis
+- Limited gender data affecting gender-related inquiries
 
-To replicate the analysis, you can follow the steps outlined in the provided R Markdown notebook (`EDA_Notebook.Rmd`). Make sure to have the required packages installed.
+### Next Steps (Future Directions)
+1. Address missing data through external sources or imputation techniques.
+2. Investigate the impact of education on salary disparities.
+3. Explore additional demographic factors influencing compensation.
+4. Enhance visualizations for more insightful analysis.
 
-Feel free to explore and contribute to this analysis to enhance our understanding of salary dynamics within the data science industry.
+## Getting Started
+
+To replicate the analysis:
+1. Clone this repository to your local machine.
+2. Open the R Markdown notebook (`EDA_Notebook.Rmd`) in RStudio.
+3. Install required packages mentioned in the notebook.
+4. Run the notebook cells step by step.
+
+
+## Contact Info
+
+For inquiries, please contact:
+- Alvin Jiao
+- Email Address: yjiao25@emory.edu
+
 
 ## References
 
