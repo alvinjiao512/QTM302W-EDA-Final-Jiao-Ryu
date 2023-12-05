@@ -1,0 +1,277 @@
+---
+title: "EDA Notebook Draft"
+output: html_notebook
+---
+
+# Introduction
+
+```{r}
+# Load packages we are going to use
+pacman::p_load(tidyverse, janitor, plotly, dataMeta, RColorBrewer, gridExtra)
+```
+
+```{r}
+# Read the data and store it to 'salaries'
+salaries <- read.csv(file = '/Users/alvinjiao/Desktop/QTM 302W/Salary.csv')
+head(salaries)
+```
+
+# Data Exploring
+
+This data, broadly, speaking has information of data science employees and their salaries available on free data-oriented platforms such as Kaggle (note: the author of the original source of the data has just recently switched their profile into private mode, so an alternate link will be used as an substitute: <https://www.kaggle.com/code/febiec/data-science-and-tech-salaries-visualization/notebook>). To be specific, some of the main variables that are part of this data set include but not limited to: yearly compensation, race, final education level, years of experience, number of years at the current company, and geographic location. This data set was chosen due to the increasingly significant role data literacy and analysis plays in the modern world. Simply put, the importance of data is not only just strictly limited to the academic field but has transformed to be a major integral part that is now fundamentally interlinked with jobs. As the continued relevance of data is growing stronger, the desire for entities - employers - to look skilled personnel can be best seen by their willing to compensate aptly skilled personnel. Granted, even with the same field of expertise, there are factors that contribute disparity. Precisely, to that end, by analyzing this data set, the objective is to depict some relevant and informative insight into some of the factors that might influence a salary of an individual. Thereby gathering a much more holistic view of factors that contribute to the disparity and variations among the personnel within one industry. 
+
+The principal aim behind this analysis is to scrutinize as to why total yearly compensation, henceforth referred to as "salary", differ from the various regions of the United States. In order to achieve this exploration of data, the scope of the data, first and foremost will be limited to include only the values that pertain to the US. Second, although this will be discussed more in-depth in the corresponding section later, the regions that will be used for the duration of this analysis are as follows: Northeast, Midwest, South, and West. Lastly, the central lens that this analysis will be conducted under is via the location in order to scrutinize why there are salary variations among the different regions of one country - the US. To that end, discussions of other variables that might explain the differences in the regionally grouped locations will be conducted especially through exploring the total experience variable in particular.
+
+```{r}
+# Check what classes the variables are in
+str(salaries)
+# Check if thear are duplicated observations
+get_dupes(salaries) #Check for duplicates: NONE!
+```
+
+The data set includes 62642 observations and 29 columns to store them. The column variables are illustrated in the data dictionary. Some of which have been already mentioned in the prior section. The data set is partially clean, for its variable types are correct and it does not have any duplicates. However, it is not clean in terms of variable names and missing values. Although this will be addressed once more towards the end of the analysis, some variables pertaining to education in particular has been severely compromised due to the overwhelmingly abundant number of missing values. Otherwise, most variables have consistent and usable data that can be properly quantified.
+
+```{r}
+# Summarize key parameters of the dataset
+summary(salaries)
+```
+
+# Data Cleaning
+
+As discussed above, although the data points themselves are present, some of them have been reocrded in a format that proves difficult to run analysis efficiently. To that end, the following procedures are done in order to clean the data points to render them comparatively more usable for effective analysis. Notably, some variable names are in camelCase, such as rowNumber, and most are in snake_case. A simple solution is to make follow the conventions of the majority. Consequently, given that most of the data values are written in snake_case, the format where each space is replaced by (_) instead, the values will all be standardized into snake_case. Additionally, from the summaries list, the data includes a variety of information pertaining to each variable. For example, the min and max, the other quartiles, mean, and NA values (if applicable), are all shown. While this certainly is useful information, it is very easy to get overwhelmed very quickly, so at this point, we believe that it is sufficient to trim down on some of the information depictions until the latter stages of the analysis.
+
+```{r}
+salaries <- salaries%>%
+  clean_names("snake") #Make them all snake_case
+head(salaries)
+```
+
+The next item on the list for cleaning is the locations variable. Due to the nature of the data set being gathered from volunteering subjects, in lieu of a strictly regimented structure where the surveys/questionnaires limit the format of an answer, the input values for the locations variable subsequently has some of the most frequent discrepancies among its values. As a result, a preliminary clean up procedure is in order to, once again, standardize the values for effective analysis. The initial step was to broadly encompass the values into a (city, state) format. However, running the following line of code renders warnings. As, the data set contains location values that are not formatted this way and also formatted in a way that lists the country name as well. For instance, (city name, state name, country name). As aforementioned in the introduction, location values outside of the US are values that were unnecessary, and were promptly eliminated.
+
+```{r}
+# Clean up locations
+salaries <- salaries%>%
+  separate(location, 
+           into = c("city", "state"), 
+           sep= ",",
+           convert = TRUE)
+```
+
+After removing any observation that is outside of the US, the next task is to categorize the location values of the US values. As discussed earlier, since the aims of this analysis requires a division of the locations into macro-geographic regions, the four categories are created: West, Midwest, Northeast, and South. In conjunction to creating the regional groupings, the data values are also modified to list the official state abbreviations rather than their respective full state names, for the sake of convenience.
+
+```{r}
+# Organize all of the US locations into 4 big districts: West, Midwest, Northeast, South
+salaries <- salaries%>%
+  filter(state == " AL" | state == " AR" | state == " AZ" | state == " CA" | state == " CO" | state == " CT" | state == " FL" | state == " GA" | state == " HI" | state == " IA" | state == " ID" | state == " IL" | state == " IN" | state == " KS" | state == " KY" | state == " LA" | state == " MA" | state == " MD" | state == " ME" | state == " MI" | state == " MN" | state == " MO" | state == " MS" | state == " MT" | state == " NC" | state == " ND" | state == " NE" | state == " NH" | state == " NJ" | state == " NM" | state == " NY" | state == " OH" | state == " OK" | state == " OR" | state == " PA" | state == " RI"| state == " SC" | state == " TN" | state == " TX" | state == " UT" | state == " VA" | state == " VT" | state == " WA" | state == " WI" | state == " WV" | state == " WY")
+
+state_abbs <- c(" AL" = "The South", " AR" = "The South", " AZ" = "The West", " CA" = "The West", " CO" = "The West", " CT" = "The Northeast", " FL" = "The South", " GA" = "The South", " HI" = "The West", " IA" = "The Midwest", " ID" = "The West", " IL" = "The Midwest", " IN" = "The Midwest", " KS" = "The Midwest", " KY" = "The South", " LA" = "The South", " MA" = "The Northeast", " MD" = "The South", " ME" = "The Northeast", " MI" = "The Midwest", " MN" = "The Midwest", " MO" = "The Midwest", " MS" = "The South", " MT" = "The West", " NC" = "The South", " ND" = "The Midwest", " NE" = "The Midwest", " NH" = "The Northeast", " NJ" = "The Northeast", " NM" = "The West", " NY" = "The Northeast", " OH" = "The Midwest", " OK" = "The South", " OR" = "The West", " PA" = "The Northeast", " RI" = "The Northeast", " SC" = "The South", " TN" = "The South", " TX" = "The South", " UT" = "The West", " VA" = "The South", " VT" = "The Northeast", " WA" = "The West", " WI" = "The Midwest", " WV" = "The South", " WY" = "The West")
+salaries_recode <- salaries %>%
+  mutate(state = recode(state, !!!state_abbs)) #Mutate this change to the original state variable
+```
+
+Since among the various variables, we chose to focus on yearly compensation, the total amount that an individual receives in a year from their employee. This coupled with other variables such as the state, and their years of experience (in general), gender, and their title - which denotes their position within the company - were chosen to run a rudimentary analysis. We chose these variables due to the fact that they best encapsulated our interests as they seemed like the most visible variables out of the entire data set.
+
+```{r}
+#Select intersting variables
+salaries <- salaries%>%
+  select(totalyearlycompensation,yearsofexperience,gender,title, state)
+```
+
+As such to that end, we strove to visualize the yearly compensation in the form of a boxplot to provide some preliminary basis of understanding. With the visualization of the boxplot this definitely provided aid as to which direction our analysis should focus on.
+
+```{r}
+# Boxplot about total yearly compensation
+salaries%>%
+ggplot(aes(x=totalyearlycompensation))+
+  geom_boxplot()
+```
+
+### Question 1: Is there an association between average yearly compensation and location?
+
+Given that this is the primary question that we seek to scrutinize, a visualization of this the relationship between salary, formally the total yearly compensation and location is pertinent. To better understand the issue at stake, the following plots a graph showcasing the density, the frequency, per salary amount, respective to their geographic locations. Where the x-axis is the total yearly compensation, y-axis is the density, or frequency, and the legend depicts the colors of the respective regions. 
+
+The following visualization clearly indicates that there is a pretty significant disparity in the total yearly compensation between the four regions. Where the West is clearly illustrated to have the most number of engineers on almost all levels, except towards the lower end of the salary. Overall, the Midwest is shown to have the highest number of engineers at the lower levels while being lower at almost all levels among the four regions. Another critical point is that the "peak", the highest frequency of salary per region varies quite significantly, where the highest to lowest is as follows: West, Northeast, South, Midwest. To sum up, this visualization clearly encapsulated our preliminary hypothesis that there would be some form of salary discrepancy across the regions of the US.
+
+```{r}
+plot1 <- ggplot(salaries_recode, aes(x = totalyearlycompensation, color = state)) + geom_density() + # density plot
+xlim(0, 1e+06) +
+xlab("Total Yearly Compensation")+
+  ylab("Density")+
+  ggtitle("The Relationship Between Total Yearly Compensation and Location")
+plot1
+```
+
+### Question 2: Is there an association between the years of experience and  total compensation, in the purview of gender?
+
+Now that the discrepancy between the regions has been established, we proceeded to hypothesize why the discrepancies exist. And one of the first variables that deemed to be potentially responsible was the total years of experience. To be specific, we hypothesized that many the varying regions had varying roles fulfilling their niches within the broader IT industry. In that, for example, the West predominantly was the "go-to" for senior/seasoned personnel, while regions such as the South and Midwest were the entry-level regions for fresh college grads or newcomers to the industry. If the hypothesis was indeed true, then the data visualization would necessarily portray that the higher-average salary regions would be predominately have a more seasoned constituency.
+
+However, before this could be tested, one key assumption needed to be tested: the assumption that whether total work experience, on average, tend to influence total yearly compensation. As such in order to test this key assumption, we decided to create a scatterplot to illustrate the association between total yearly compensation and total years of experience.The x-axis is the total years of experience, the y-axis is the total yearly compensation, and the legend includes a differentiation between the genders by their denoted respective colors. Naturally, this means that exclusion of observations that do not have data on gender are necessary.
+
+Gender was originally added to this visualization to provide the stepping stone for another potential inquiry into a different hypothesis similar to the one stated above. An assumption to check if any of the regions have a skewed population in terms of their workforce that could influence the total yearly compensation insofar as to yield a disparity as seen in question 1.
+
+Unfortunately, overall, the key assumption that we sought to scrutinize did not yield any statistically significant correlations. Furthermore, due to the comparatively dearth of female gender data values, any assumptions regarding the role of gender has also been rendered inconclusive.
+
+```{r}
+salaries_2 <- salaries %>%
+  drop_na(gender)%>% #Exclude observations without a gender data
+  filter(gender == "Male"|gender=="Female")%>%
+  filter(!is.na(totalyearlycompensation))
+  
+plot2 <-plot_ly(data = salaries_2, 
+        x = ~yearsofexperience, 
+        y= ~totalyearlycompensation)%>%
+  add_markers(color = ~gender)%>%
+  layout(title = "Association Between Years of Service and Total Yearly Compensation",xaxis = list(title = 'Years of Service'), 
+         yaxis = list(title = 'Total Yearly Compensation'))
+  
+plot2
+```
+
+### Question 3: Is there an association between years of experience and location?
+
+Although the key assumption as to whether total years of experience and total yearly compensation had any impactful correlation was rendered moot in the question above, an alternative direction was proposed. A direction in which that reversed the conditional, "correlational", relationship between the two variables. What if, instead of assuming that greater the experience, the greater the compensation, there was an alternative cause, a confounder, that influences the salary levels? This could be shown to have some degree of truth to it, if, the visualization of the total years of experience and location provide a paradoxical relationship to the one portrayed in question 1.
+
+The following visualization proved to fit just that, where the West had the lowest total number of engineers in total, and in almost all bandwidths of experience years. Whereas, comparatively, the Midwest, Northeast, and South, respectively, all had higher frequencies in most bandwidths juxtaposed to the West. Although this visualization alone does not provide any definitive proof that the original hypothesis on experience and compensation being invalid, it does provide definitive proof that there is some form of a confounder that influences the relationship. 
+
+```{r}
+plot3 <- ggplot(salaries_recode, aes(x = yearsofexperience, color = state)) + geom_histogram() +
+xlab("Years Of Experience")+
+  ylab("Density")+
+  ggtitle("The Relationship Between Years of Experience and Location")# density plot
+
+plot3
+```
+
+### Conclusion & Implications
+
+To conclude, through the scrutinizing three principal questions in the hopes of answering the salary discrepancy between the various regions of the US has proved inconclusive, there is strong evidence to indicate that there is a potential confounder that could be at play. Truthfully, one of the core questions that we originally anticipated to analyze was the educational aspect of the data set. However, upon discovery, to our dismay, the vast majority of the education data values were empty. We believed that, from the start, that the educational differences impacting the salaries among the regions to be the most chiefly pertinent question. Unfortunately, due to the lack of available usable data, this avenue of approach was disbarred.
+
+Moving forward, however, we envision that we will modify the hypothesis formulation format. As to address the caveats surrounding the variable in question via extrapolating data with potential outside source interchanges. Ultimately, this would mean that we would slowly build our way up to reach an analysis that encompasses the core variables that we found to be the most pertinent while examining this data set. Subsequently enabling us to employ a an approach vector that, hopefully, will not be stopped dead in its tracks due to the lack of sufficient data values. All in all, this exercise provided an opportunity to garner valuable insight and comprehend the exigencies of when data values are lacking.
+
+
+### Cost of Living Exploration
+
+```{r}
+col_index = read.csv(file = '/Users/alvinjiao/Desktop/QTM 302W/Cost_of_living_index.csv')
+```
+```{r}
+col_index1 <- col_index %>%
+  mutate(
+    City = as.character(City),
+    City_Name = str_split(City, ", ", simplify = TRUE)[, 1],
+    State = str_split(City, ", ", simplify = TRUE)[, 2],
+    Country = str_split(City, ", ", simplify = TRUE)[, 3]
+  ) %>%
+  select(-City)
+```
+
+```{r}
+us_index <- subset(col_index1, Country == "United States")
+# Mapping state initials to regions
+region_mapping <- c(
+  "NY" = "The Northeast", "CA" = "The West", "HI" = "The West", "AK" = "The West", "DC" = "The South",
+  "SC" = "The South", "WA" = "The West", "NJ" = "The Northeast", "MA" = "The Northeast", "CT" = "The Northeast",
+  "PA" = "The Northeast", "IL" = "The Midwest", "CO" = "The West", "VT" = "The Northeast", "FL" = "The South",
+  "ME" = "The Northeast", "OR" = "The West", "MD" = "The South", "LA" = "The South", "NC" = "The South", 
+  "MN" = "The Midwest", "GA" = "The South", "AL" = "The South", "IN" = "The Midwest", "TX" = "The South",
+  "OH" = "The Midwest", "MO" = "The Midwest", "WI" = "The Midwest", "TN" = "The South", "VA" = "The South",
+  "MI" = "The Midwest", "NV" = "The West", "AR" = "The South", "NM" = "The West", "AZ" = "The West", "KS" = "The Midwest",
+  "UT" = "The West", "OK" = "The South", "IA" = "The Midwest", "KY" = "The South", "ID" = "The West"
+)
+
+us_index_r <- us_index %>%
+  mutate(
+    Regions = case_when(
+      State %in% names(region_mapping) ~ region_mapping[State],
+      TRUE ~ "Unknown"  
+    )
+  )
+
+```
+
+```{r}
+# Plotting the density
+ggplot(us_index_r, aes(x = Cost.of.Living.Index, fill = Regions)) +
+  geom_density(alpha = 0.5) +
+  scale_fill_manual(values = c(
+    "The Northeast" = "blue", 
+    "The West" = "green", 
+    "The Midwest" = "orange", 
+    "The South" = "red"
+  )) +
+  theme_minimal() +
+  labs(
+    title = "Density Plot of Cost of Living Index by Regions",
+    x = "Cost of Living Index",
+    y = "Density"
+  )
+
+```
+### Salary vs. Majors vs. Gender Exploration
+```{r}
+library(ggplot2)
+
+# Order the dataset by Mid.Career.Median.Salary
+Wage_sorted <- Wage[order(Wage$Mid.Career.Median.Salary, decreasing = TRUE), ]
+
+# Extract the top ten and bottom ten rows
+top_ten <- head(Wage_sorted, 10)
+bottom_ten <- tail(Wage_sorted, 10)
+
+# Create a function to generate the bar plot
+plot_major_salary <- function(data, title) {
+  ggplot(data, aes(x = reorder(Undergraduate.Major, Mid.Career.Median.Salary), y = Mid.Career.Median.Salary)) +
+    geom_bar(stat = "identity", fill = "skyblue") +
+    coord_flip() +
+    theme_minimal() +
+    labs(
+      title = title,
+      x = "Undergraduate Major",
+      y = "Mid-Career Median Salary"
+    )
+}
+
+# Plot the top ten highest
+plot_top_ten <- plot_major_salary(top_ten, "Top Ten Highest Mid-Career Median Salaries")
+
+# Plot the bottom ten
+plot_bottom_ten <- plot_major_salary(bottom_ten, "Bottom Ten Mid-Career Median Salaries")
+
+# Display the plots side by side
+library(gridExtra)
+grid.arrange(plot_top_ten, plot_bottom_ten, ncol = 2)
+
+```
+
+```{r}
+grad = read.csv('recent-grads.csv')
+grad_sorted <- grad[order(grad$ShareWomen, decreasing = TRUE), ]
+
+# Extract the top ten and bottom ten rows
+top_ten <- head(grad_sorted, 10)
+bottom_ten <- tail(grad_sorted, 10)
+
+# Create a function to generate the bar plot
+plot_major_sharewomen <- function(data, title) {
+  ggplot(data, aes(x = reorder(Major, ShareWomen), y = ShareWomen, fill = `Major_category`)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    theme_minimal() +
+    labs(
+      title = title,
+      x = "Major",
+      y = "ShareWomen"
+    )
+}
+
+# Plot the top ten highest
+plot_top_ten <- plot_major_sharewomen(top_ten, "Top Ten Highest ShareWomen")
+
+# Plot the bottom ten
+plot_bottom_ten <- plot_major_sharewomen(bottom_ten, "Bottom Ten ShareWomen")
+
+# Display the plots side by side
+library(gridExtra)
+grid.arrange(plot_top_ten, plot_bottom_ten, ncol = 1)
+```
+
