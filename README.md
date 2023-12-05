@@ -1,81 +1,42 @@
-# QTM302W-EDA-Final-Jiao-Ryu
-*Instructions: Click on the raw button in the upper right hand corner of this box.  Copy and paste the template into the README.md document on your github.  Fill in the titles, information and links where prompted! Feel free to stray a bit to suit your project but try to stick to the format as closely as possible for consistency across DSWG projects.*
+# Data Science Salary Analysis
 
-# Project Name
-This project is a part of the [Data Science Working Group](http://datascience.codeforsanfrancisco.org) at [Code for San Francisco](http://www.codeforsanfrancisco.org).  Other DSWG projects can be found at the [main GitHub repo](https://github.com/sfbrigade/data-science-wg).
+## Introduction
 
-#### -- Project Status: [Active, On-Hold, Completed]
+This repository contains an exploratory data analysis (EDA) notebook that aims to investigate potential salary disparities among data science professionals in the United States. The dataset used encompasses various components, including total yearly compensation, total years of experience, gender, and 24 other variables related to data science employees. The primary objective is to determine if there is a salary disparity among different regions defined by the US Census Bureau, and if so, to identify potential causes.
 
-## Project Intro/Objective
-The purpose of this project is ________. (Describe the main goals of the project and potential civic impact. Limit to a short paragraph, 3-6 Sentences)
+## Structure
 
-### Partner
-* [Name of Partner organization/Government department etc..]
-* Website for partner
-* Partner contact: [Name of Contact], [slack handle of contact if any]
-* If you do not have a partner leave this section out
+The analysis is structured as follows:
 
-### Methods Used
-* Inferential Statistics
-* Machine Learning
-* Data Visualization
-* Predictive Modeling
-* etc.
+1. **Data Exploration:**
+   - Loading necessary packages and reading the dataset.
+   - Providing an overview of the dataset, including key variables such as total yearly compensation, race, education level, years of experience, and geographic location.
 
-### Technologies
-* R 
-* Python
-* D3
-* PostGres, MySql
-* Pandas, jupyter
-* HTML
-* JavaScript
-* etc. 
+2. **Data Cleaning:**
+   - Standardizing variable names to snake_case for consistency.
+   - Cleaning up the location variable to focus on US locations and categorizing them into four regions: Northeast, Midwest, South, and West.
 
-## Project Description
-(Provide more detailed overview of the project.  Talk a bit about your data sources and what questions and hypothesis you are exploring. What specific data analysis/visualization and modelling work are you using to solve the problem? What blockers and challenges are you facing?  Feel free to number or bullet point things here)
+3. **Exploratory Data Analysis:**
+   - Investigating the relationship between total yearly compensation and location using visualizations, including a boxplot and density plot.
+   - Examining the association between years of experience and total compensation, considering gender as a factor.
+   - Exploring the relationship between years of experience and location to identify potential confounders.
 
-## Needs of this project
+4. **Conclusion & Implications:**
+   - Summarizing key findings and addressing limitations in the dataset, such as missing education data.
+   - Outlining future steps to modify hypotheses, address missing data, and conduct a more in-depth analysis.
 
-- frontend developers
-- data exploration/descriptive statistics
-- data processing/cleaning
-- statistical modeling
-- writeup/reporting
-- etc. (be as specific as possible)
+5. **Cost of Living Exploration:**
+   - Exploring the cost of living index by region to provide additional context for salary disparities.
 
-## Getting Started
+6. **Salary vs. Majors vs. Gender Exploration:**
+   - Analyzing the relationship between undergraduate majors, mid-career median salaries, and gender using bar plots.
 
-1. Clone this repo (for help see this [tutorial](https://help.github.com/articles/cloning-a-repository/)).
-2. Raw Data is being kept [here](Repo folder containing raw data) within this repo.
+## Usage
 
-    *If using offline data mention that and how they may obtain the data from the froup)*
-    
-3. Data processing/transformation scripts are being kept [here](Repo folder containing data processing scripts/notebooks)
-4. etc...
+To replicate the analysis, you can follow the steps outlined in the provided R Markdown notebook (`EDA_Notebook.Rmd`). Make sure to have the required packages installed.
 
-*If your project is well underway and setup is fairly complicated (ie. requires installation of many packages) create another "setup.md" file and link to it here*  
+Feel free to explore and contribute to this analysis to enhance our understanding of salary dynamics within the data science industry.
 
-5. Follow setup [instructions](Link to file)
+## References
 
-## Featured Notebooks/Analysis/Deliverables
-* [Notebook/Markdown/Slide Deck Title](link)
-* [Notebook/Markdown/Slide DeckTitle](link)
-* [Blog Post](link)
-
-
-## Contributing DSWG Members
-
-**Team Leads (Contacts) : [Full Name](https://github.com/[github handle])(@slackHandle)**
-
-#### Other Members:
-
-|Name     |  Slack Handle   | 
-|---------|-----------------|
-|[Full Name](https://github.com/[github handle])| @johnDoe        |
-|[Full Name](https://github.com/[github handle]) |     @janeDoe    |
-
-## Contact
-* If you haven't joined the SF Brigade Slack, [you can do that here](http://c4sf.me/slack).  
-* Our slack channel is `#datasci-projectname`
-* Feel free to contact team leads with any questions or if you are interested in contributing!
+- Original dataset source: [Kaggle - Data Science and Tech Salaries Visualization](https://www.kaggle.com/code/febiec/data-science-and-tech-salaries-visualization/notebook)
